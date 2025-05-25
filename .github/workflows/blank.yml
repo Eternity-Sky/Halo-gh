@@ -1,0 +1,40 @@
+name: Deploy Halo
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Set up Java
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          
+      - name: Run Halo
+        run: |
+          wget https://dl.halo.run/release/halo-2.20.12.jar
+          java -jar halo-2.20.12.jar
+        env:
+          HALO_WORK_DIR: ${{ github.workspace }}/.halo2
+          
+      - name: Build static content
+        run: |
+          mkdir -p ${{ github.workspace }}/static
+          cp -r ${{ github.workspace }}/.halo2/static/* ${{ github.workspace }}/static/
+          
+      - name: Setup Pages
+        uses: actions/configure-pages@v3
+        
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v1
+        with:
+          path: ${{ github.workspace }}/static
+          
+      - name: Deploy to GitHub Pages
+        uses: actions/deploy-pages@v2
