@@ -36,8 +36,6 @@ jobs:
         with:
           name: static-content
           path: ${{ github.workspace }}/static
-        with:
-          path: ${{ github.workspace }}/static
           
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v1
